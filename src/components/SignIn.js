@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -26,15 +26,15 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function SignIn() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
-  };
+export default function SignIn({ setName }) {
+  const [disabled, setDisabled] = useState(true);
+  const [string, setString] = useState("");
+  console.log(string);
+
+  useEffect(() => {
+    const disabled = string === "";
+    setDisabled(disabled);
+  }, [string]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -51,13 +51,9 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             ようこそ
           </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{ mt: 1 }}
-          >
+          <Box component="form" noValidate sx={{ mt: 1 }}>
             <TextField
+              variant="outlined"
               margin="normal"
               required
               fullWidth
@@ -65,12 +61,24 @@ export default function SignIn() {
               label="ニックネーム"
               name="name"
               autoFocus
+              onChange={(e) => setString(e.target.value)}
+              onKeyDown={(e) => {
+                console.log({ key: e.key });
+                if (e.key === "Enter") {
+                  setName(e.target.value);
+                  e.preventDefault();
+                }
+              }}
             />
             <Button
-              type="submit"
+              type="button"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={disabled}
+              onClick={() => {
+                setName(string);
+              }}
             >
               はじめる
             </Button>
